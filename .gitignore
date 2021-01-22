@@ -1,4 +1,4 @@
 tools/
 sqldork/export/
 result/
-data/proxy-list.txt
+sqldork/data/proxy-list.txt
