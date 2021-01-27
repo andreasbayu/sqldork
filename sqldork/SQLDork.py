@@ -42,12 +42,6 @@ class SQLDork:
         return self.get_result(get)       
 
     def execute_dork(self,url):
-        
-        # rand_prox = self.random_proxy()
-        # prox = {
-        #     'http': 'http://'+rand_prox,
-        #     'https': 'https://'+rand_prox
-        # }
         try:
             if self._random_user_agent == True:
                 ua = random_user_agent()
@@ -99,22 +93,26 @@ class Check():
         self.session = requests.Session()
         self.thread(url, header)
 
-    def scan_sql(self, url, header=''):
-        example = ("'", "')", "';", '"', '")', '";', '`', '`)', '`;', '\\', "%27", "%%2727", "%25%27", "%60", "%5C")
+    def scan_sql(self, url, header='', deep=False):
+        simple = ("'",'\\', "%27")
+        complex = ("'", "')", "';", '"', '")', '";', '`', '`)', '`;', '\\', "%27", "%%2727", "%25%27", "%60", "%5C")
+        scan = simple
+        if deep == True:
+            scan = complex
         x = 0
-        for i in example:
+        for met in scan:
             try:
-                scanurl = f"{url}{i}"
+                scanurl = f"{url}{met}"
                 res = self.session.get(scanurl, headers=header)
                 if self.is_vuln(res):
                     print("[+] Scanning :", url)
-                    print("{}[+] SQL Injection vulnerability found( {} ) :{}".format(cl.gn,i,cl.c),url)
+                    print(f"{cl.gn}[*] SQL Injection vulnerability found :{cl.c}", url)
                     break
                 else:
                     x += 1
-                    if x == len(example):
+                    if x == len(scan):
                         print("[+] Scanning :", url)
-                        print("{}[!] SQL Injection vulnerability not found{}".format(cl.rd,cl.c))
+                        print(f"{cl.rd}[!] SQL Injection vulnerability not found : {cl.c}")
                         x = 0
             except Exception as e:
                 print("{}[!] Error :{}".format(cl.rd,cl.c), e)
@@ -136,10 +134,15 @@ class Check():
                 "warning:mysql",
                 "unclosed quotation mark after the character string",
                 "quoted string not properly terminated" 
-            )    
+            ) 
+        # decode = res.content.decode().lower()   
+        # for error in errors:
+        #     if error in decode:
+        #         return True
         for error in errors:
-            if error in res.content.decode().lower():
+            if error in res.text.lower():
                 return True
+                break
         return False
 def random_user_agent():
     ua = []
