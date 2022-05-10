@@ -1,5 +1,4 @@
 import argparse 
-from sys import argv
 from os import system
 from sqldork.SQLDork import SQLDork
 

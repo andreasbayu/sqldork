@@ -1,11 +1,10 @@
-import bs4
 import urllib
 import requests 
 from bs4 import BeautifulSoup
 import time
-import sys
 import random
 import threading
+
 class SQLDork:
     def __init__(self,dork='', random_user_agent=False, page=0, output='', random_dork=False):
         self._list_url = []
@@ -37,7 +36,6 @@ class SQLDork:
     #     return random.choice(prox) 
 
     def google_dork(self, dork):
-        text = urllib.parse.quote_plus(dork)
         get = self.execute_dork(f'https://www.google.com/search?q={dork}&start={self._page*10}')
         return self.get_result(get)       
 
@@ -45,13 +43,14 @@ class SQLDork:
         try:
             if self._random_user_agent == True:
                 ua = random_user_agent()
-                headers = {"user-agent":f"{ua}",'referer':'https://www.google.com/'}
-                # print("[*] Search Dork..")
+                headers = { 
+                    "user-agent":f"{ua}",
+                    "referer": "https://www.google.com/"
+                    }
                 res = requests.get(url, headers=headers).text
             else:
-                res = requests.get(url).text
-            bs = BeautifulSoup(res, "html.parser").find_all('div',class_='g')
-            # print(res)
+                res = requests.get(url).text          
+            bs = BeautifulSoup(res, "html.parser").find_all('div',class_='egMi0')
         except requests.ConnectionError as ce:
             print('[!] Error:', ce)
         except requests.RequestException as e:
@@ -67,8 +66,9 @@ class SQLDork:
         twidh = 10
         for rc in result:
             time.sleep(0.2)
-            print("[+] URL :",rc.a['href'])
-            self._list_url.append(rc.a['href'])
+            url = urllib.parse.unquote(str(rc.a['href']).replace('/url?q=',''))
+            print("[+] URL :", url)
+            self._list_url.append(url)
         while True:
             c = input('[?] Scan ? [Y/n] ~ ')
             if c.lower() == 'y':
@@ -112,7 +112,7 @@ class Check():
                     x += 1
                     if x == len(scan):
                         print("[+] Scanning :", url)
-                        print(f"{cl.rd}[!] SQL Injection vulnerability not found : {cl.c}")
+                        print(f"{cl.rd}[!] SQL Injection vulnerability not found ! {cl.c}")
                         x = 0
             except Exception as e:
                 print("{}[!] Error :{}".format(cl.rd,cl.c), e)
@@ -142,7 +142,6 @@ class Check():
         for error in errors:
             if error in res.text.lower():
                 return True
-                break
         return False
 def random_user_agent():
     ua = []

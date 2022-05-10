@@ -1,4 +1,6 @@
 tools/
 sqldork/export/
 result/
+sqldork/__pycache__/
 sqldork/data/proxy-list.txt
+venv
