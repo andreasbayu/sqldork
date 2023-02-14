@@ -1,9 +1,12 @@
 import argparse 
-from os import system
+import os
 from sqldork.SQLDork import SQLDork
 
 def barner():
-    system('clear')
+    if(os.name == 'nt'):
+        os.system('clear')
+    else:
+        os.system('clear')
     print("""
                                         
     :::      ::::::::   ::::::::   :::        :::::::::   ::::::::       
@@ -25,9 +28,10 @@ if __name__ == '__main__':
     parser.add_argument('--dork',nargs='?', dest='dork', help='SQL injection dork')
     parser.add_argument('--page',nargs='?', dest='page', help='number of google page')
     # parser.add_argument('--output',nargs='?', dest='output', help='output result')
-    parser.add_argument('--output', nargs='?', dest='output', help='output file txt')
+    # parser.add_argument('--output', nargs='?', dest='output', help='output file txt')
     parser.add_argument('--random-agent', dest='user_agent', action='store_true', help='random user agent')
     par = parser.parse_args()
+
     # Default value
     random_dork = False
     random_agent = False
@@ -39,8 +43,8 @@ if __name__ == '__main__':
         parser.print_help()
     if not par.dork:
         parser.print_help()
-    elif str(par.dork) == 'random':
-        random_dork = True
+    # elif str(par.dork) == 'random':
+    #     random_dork = True
     else:
         dork = par.dork
     if par.page is not None:

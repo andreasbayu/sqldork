@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 import time
 import random
 import threading
+import re
 
 class SQLDork:
     def __init__(self,dork='', random_user_agent=False, page=0, output='', random_dork=False):
@@ -44,12 +45,17 @@ class SQLDork:
             if self._random_user_agent == True:
                 ua = random_user_agent()
                 headers = { 
-                    "user-agent":f"{ua}",
+                    "User-Agent": ua,
                     "referer": "https://www.google.com/"
                     }
-                res = requests.get(url, headers=headers).text
+                print('[*] User-Agent: '+ua+'\n')
+                res = requests.get(url, headers).text
             else:
-                res = requests.get(url).text          
+                headers = { 
+                        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36',
+                        "referer": "https://www.google.com/"
+                    }
+                res = requests.get(url).text       
             bs = BeautifulSoup(res, "html.parser").find_all('div',class_='egMi0')
         except requests.ConnectionError as ce:
             print('[!] Error:', ce)
@@ -65,8 +71,10 @@ class SQLDork:
         
         twidh = 10
         for rc in result:
-            time.sleep(0.2)
-            url = urllib.parse.unquote(str(rc.a['href']).replace('/url?q=',''))
+            time.sleep(0.1)
+            get_url = re.findall(r'href=\"(.*?)\"', str(rc.a))[0]
+            unquote = urllib.parse.unquote(str(get_url).replace('/url?q',''))
+            url = re.findall(r'=(.*?)&amp', unquote)[0]
             print("[+] URL :", url)
             self._list_url.append(url)
         while True:
@@ -82,7 +90,7 @@ class SQLDork:
     def check_vuln(self, list_url):
         print("\n{:<20}".format(" <---- SQLi Checker ---->\n"))
         ua = random_user_agent()
-        header = {"user-agent":f"{ua}",'referer':'https://www.google.com/'}
+        header = {"User-Agent":f"{ua}",'referer':'https://www.google.com/'}
         for url in list_url:
             Check(url, header)
         return
@@ -159,5 +167,5 @@ class cl:
 // random Proxy
 // bing dork
 // duck dork
-// output file
+// output file yuRUbf
 """
