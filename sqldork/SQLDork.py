@@ -128,6 +128,8 @@ class Check():
             except KeyboardInterrupt:
                 print('\nBye')
                 exit()
+        # blank space        
+        print()
 
     def thread(self, url, header):
         try:
